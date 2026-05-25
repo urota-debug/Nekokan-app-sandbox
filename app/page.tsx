@@ -1,4 +1,4 @@
-import Product from "./components/Product";
+import Product from "@/app/components/Product";
 import Image from "next/image";
 
 type ProductType = {
@@ -47,7 +47,6 @@ const product = [
 ];
 
 export default async function Home() {
-
   return (
     <>
       <div className="relative w-full h-64 md:h-96">
@@ -66,15 +65,13 @@ export default async function Home() {
 
       <main className="flex flex-wrap justify-center items-center md:mt-16 mt-10">
         <h2 className="text-center w-full font-bold text-3xl mb-2">猫缶一覧</h2>
-        {product.map((product: ProductType) => (
+        {/* {contents.map((book: BookType) => (
           <Product
-            key={product.id}
-            book={product}
+            key={book.id}
+            book={book}
           />
-        ))}
+        ))} */}
       </main>
     </>
   );
 }
-
-
