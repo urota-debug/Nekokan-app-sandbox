@@ -73,7 +73,7 @@ const Header = async () => {
                 width={40}
                 height={40}
                 alt="profile_icon"
-                src={user?.image || "/default_icon.png"}
+                src={user?.image || "/default_icon.svg"}
                 className="rounded-full"
               />
             </Link>
@@ -82,7 +82,7 @@ const Header = async () => {
               width={40}
               height={40}
               alt="profile_icon"
-              src={"/default_icon.png"}
+              src={"/default_icon.svg"}
               className="rounded-full"
             />
           )}

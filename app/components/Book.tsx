@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { normalizeImageUrl } from "@/app/lib/image";
 import { BookType } from "@/app/types/types";
 import Link from "next/link";
 
@@ -18,6 +19,8 @@ const Book = ({ book, isPurchased }: BookProps) => {
     }
   };
 
+  const imageSrc = normalizeImageUrl(book.image?.url);
+
   const formattedPrice = new Intl.NumberFormat("ja-JP", {
     style: "currency",
     currency: "JPY",
@@ -30,14 +33,20 @@ const Book = ({ book, isPurchased }: BookProps) => {
           className="cursor-pointer shadow-2xl duration-300 hover:translate-y-1 hover:shadow-none"
         >
           <div className="relative w-96 h-64">
-            <Image
-              priority
-              src={book.image?.url ?? ""}
-              alt={book.title}
-              layout="fill"
-              objectFit="cover"
-              className="rounded-t-md"
-            />
+            {imageSrc ? (
+              <Image
+                priority
+                src={imageSrc}
+                alt={book.title}
+                fill
+                sizes="384px"
+                className="rounded-t-md object-cover"
+              />
+            ) : (
+              <div className="flex h-full w-full items-center justify-center rounded-t-md bg-slate-200 text-slate-500">
+                画像なし
+              </div>
+            )}
           </div>
           <div className="px-4 py-4 bg-slate-100 rounded-b-md h-full">
             <h2 className="text-xl font-semibold">{book.title}</h2>

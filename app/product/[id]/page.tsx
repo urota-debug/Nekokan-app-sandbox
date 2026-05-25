@@ -1,12 +1,15 @@
 "use client";
 
 import { getDetailBook } from "@/app/lib/microcms/client";
+import { normalizeImageUrl } from "@/app/lib/image";
 import Loading from "@/app/loading";
 import { BookType } from "@/app/types/types";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+
+const SHIPPING_FEE = 500;
 
 const modalStyle: React.CSSProperties = {
   display: "flex",
@@ -36,9 +39,11 @@ const DetailProduct = () => {
   const [book, setBook] = useState<BookType | null>(null);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
+  const [checkoutError, setCheckoutError] = useState<string | null>(null);
   const router = useRouter();
 
   const { data: session } = useSession();
+  const user = session?.user;
 
   useEffect(() => {
     if (!id) return;
@@ -58,6 +63,58 @@ const DetailProduct = () => {
     fetchBook();
   }, [id]);
 
+  const startCheckout = async (targetBook: BookType) => {
+    setCheckoutError(null);
+
+    try {
+      const response = await fetch("/api/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          productId: targetBook.id,
+          title: targetBook.title,
+          price: targetBook.price + SHIPPING_FEE,
+          userId: user?.id,
+        }),
+      });
+
+      const responseData = await response.json();
+
+      if (!response.ok) {
+        setCheckoutError(
+          responseData.message ?? "決済セッションの作成に失敗しました",
+        );
+        return;
+      }
+
+      if (responseData.checkout_url) {
+        if (responseData.session_id) {
+          sessionStorage.setItem("stripeSessionId", responseData.session_id);
+        }
+        window.location.href = responseData.checkout_url;
+      } else {
+        setCheckoutError("チェックアウト URL が取得できませんでした");
+        console.error("Invalid response data:", responseData);
+      }
+    } catch (err) {
+      console.error("Error in startCheckout:", err);
+      setCheckoutError("決済の開始中にエラーが発生しました");
+    }
+  };
+
+  const handlePurchaseConfirm = () => {
+    if (!user) {
+      setShowModal(false);
+      router.push("/api/auth/signin");
+      return;
+    }
+
+    if (!book) return;
+
+    setShowModal(false);
+    startCheckout(book);
+  };
+
   if (loading) {
     return <Loading />;
   }
@@ -65,15 +122,6 @@ const DetailProduct = () => {
   if (!book) {
     return <div>Product not found</div>;
   }
-
-  const handlePurchaseConfirm = () => {
-    if (!session?.user) {
-      setShowModal(false);
-      router.push("/login");
-    } else {
-      // Stripe購入画面へ。
-    }
-  };
 
   const formattedPrice = new Intl.NumberFormat("ja-JP", {
     style: "currency",
@@ -84,16 +132,26 @@ const DetailProduct = () => {
     return { __html: content.replace(/\n/g, "<br>") };
   };
 
+  const imageSrc = normalizeImageUrl(book.image?.url);
+
   return (
     <div className="container mx-auto p-4 mt-8 mb-8">
       <div className="bg-white shadow-lg rounded-lg overflow-hidden">
-        <Image
-          className="w-full h-80 object-cover object-center"
-          src={book.image?.url ?? ""}
-          alt={book.title}
-          width={700}
-          height={700}
-        />
+        {imageSrc ? (
+          <div className="relative h-80 w-full">
+            <Image
+              src={imageSrc}
+              alt={book.title}
+              fill
+              sizes="(max-width: 768px) 100vw, 896px"
+              className="object-cover object-center"
+            />
+          </div>
+        ) : (
+          <div className="flex h-80 w-full items-center justify-center bg-slate-200 text-slate-500">
+            画像なし
+          </div>
+        )}
         <div className="p-4">
           <div className="flex justify-between items-center mt-2">
             <span className="text-sm text-gray-500">
@@ -113,6 +171,10 @@ const DetailProduct = () => {
             <p className="text-3xl text-red-600">{formattedPrice}</p>
             <p className="text-gray-400">+送料500円</p>
           </div>
+
+          {checkoutError && (
+            <p className="text-center text-red-600 mt-4">{checkoutError}</p>
+          )}
 
           <div className="flex justify-center items-center mt-14 mb-14">
             <button
