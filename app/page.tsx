@@ -1,52 +1,40 @@
-import Product from "@/app/components/Product";
+import { getServerSession } from "next-auth";
+import Book from "@/app/components/Book";
+import { getAllProducts } from "./lib/microcms/client";
+import { BookType, Purchase, User } from "./types/types";
+import { nextAuthOptions } from "./lib/next-auth/options";
 import Image from "next/image";
 
-type ProductType = {
-  id: number;
-  title: string;
-  price: number;
-  content: string;
-  thumbnail: { url: string };
-  createdAt: string;
-  updatedAt: string;
-  tag: [];
-};
-
-// 疑似データ
-const product = [
-  {
-    id: 1,
-    title: "猫缶01",
-    thumbnail: "/thumbnails/01.png",
-    price: 2980,
-    content: "猫缶01の詳細情報です",
-    tag: ["ジャンボ缶", "多頭飼", "魚介類", "まとめ買い", "全猫種用", "お徳用"],
-    created_at: new Date().toString(),
-    updated_at: new Date().toString(),
-  },
-  {
-    id: 2,
-    title: "猫缶02",
-    thumbnail: "/thumbnails/02.png",
-    price: 1980,
-    content: "猫缶02の詳細情報です",
-    tag: ["魚介類", "まとめ買い", "全猫種用", "お徳用"],
-    created_at: new Date().toString(),
-    updated_at: new Date().toString(),
-  },
-  {
-    id: 3,
-    title: "猫缶03",
-    price: 4980,
-    thumbnail: "/thumbnails/03.png",
-    content: "猫缶03の詳細情報です",
-    tag: ["魚介類", "まとめ買い", "全猫種用"],
-    created_at: new Date().toString(),
-    updated_at: new Date().toString(),
-  },
-];
+// ビルド時に空の一覧が焼き付くのを防ぐ（microCMS はリクエストごとに取得）
+export const dynamic = "force-dynamic";
 
 export default async function Home() {
+  const session = await getServerSession(nextAuthOptions);
+  const user = session?.user as User;
+  const booksData = await getAllProducts();
+  const contents = booksData?.contents ?? [];
+
+  if (process.env.NODE_ENV === "development") {
+    console.log("[microCMS]", {
+      totalCount: booksData.totalCount,
+      contentsLength: contents.length,
+    });
+  }
+
+  let purchasesData = [];
+  let purchasedIds: string[] = [];
+
+  if (user?.id && process.env.NEXT_PUBLIC_API_URL) {
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/purchases/${user.id}`,
+    );
+
+    if (response.ok) {
+      purchasesData = await response.json();
+      purchasedIds = purchasesData.map((purchase: Purchase) => purchase.bookId);
+    }
+  }
+
   return (
     <>
       <div className="relative w-full h-64 md:h-96">
@@ -65,12 +53,20 @@ export default async function Home() {
 
       <main className="flex flex-wrap justify-center items-center md:mt-16 mt-10">
         <h2 className="text-center w-full font-bold text-3xl mb-2">猫缶一覧</h2>
-        {/* {contents.map((book: BookType) => (
-          <Product
-            key={book.id}
-            book={book}
-          />
-        ))} */}
+        {contents.length === 0 ? (
+          <p className="text-gray-600">
+            商品がありません。microCMS
+            で公開済みのコンテンツがあるか確認してください。
+          </p>
+        ) : (
+          contents.map((book: BookType) => (
+            <Book
+              key={book.id}
+              book={book}
+              isPurchased={purchasedIds.includes(book.id)}
+            />
+          ))
+        )}
       </main>
     </>
   );

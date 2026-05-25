@@ -13,6 +13,7 @@
     "@prisma/adapter-pg": "^7.8.0",
     "@prisma/client": "^7.8.0",
     "@vercel/postgres": "^0.10.0",
+    "microcms-js-sdk": "^3.0.1",
     "next": "16.2.6",
     "next-auth": "^4.24.14",
     "pg": "^8.16.0",

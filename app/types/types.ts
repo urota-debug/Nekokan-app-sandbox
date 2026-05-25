@@ -1,12 +1,14 @@
+/** microCMS リスト API（nekokan）の1件と同じ形 */
 type BookType = {
-  id: number;
+  id: string;
   title: string;
   price: number;
   content: string;
-  thumbnail: { url: string };
+  image?: { url: string; height?: number; width?: number };
   createdAt: string;
   updatedAt: string;
-  tag: [];
+  publishedAt?: string;
+  revisedAt?: string;
 };
 
 type Purchase = {

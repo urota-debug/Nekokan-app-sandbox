@@ -9,7 +9,7 @@ type BookProps = {
   isPurchased?: boolean;
 };
 
-const Product = ({ book, isPurchased }: BookProps) => {
+const Book = ({ book, isPurchased }: BookProps) => {
   const truncateText = (text: string, maxLength: number) => {
     if (text.length > maxLength) {
       return text.substring(0, maxLength) + "...";
@@ -50,7 +50,7 @@ const Product = ({ book, isPurchased }: BookProps) => {
           <div className="relative w-96 h-64">
             <Image
               priority
-              src={book.thumbnail.url}
+              src={book.image?.url ?? ""}
               alt={book.title}
               layout="fill"
               objectFit="cover"
@@ -93,4 +93,4 @@ const Product = ({ book, isPurchased }: BookProps) => {
   );
 };
 
-export default Product;
+export default Book;
