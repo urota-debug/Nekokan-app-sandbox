@@ -24,25 +24,7 @@ const Book = ({ book, isPurchased }: BookProps) => {
   }).format(book.price);
 
   return (
-    <>
-      {/* アニメーションスタイル */}
-      <style jsx global>{`
-        @keyframes fadeIn {
-          from {
-            opacity: 0;
-            transform: scale(0.9);
-          }
-          to {
-            opacity: 1;
-            transform: scale(1);
-          }
-        }
-        .modal {
-          animation: fadeIn 0.3s ease-out forwards;
-        }
-      `}</style>
-
-      <div className="flex flex-col items-center m-4 w-96">
+    <div className="flex flex-col items-center m-4 w-96">
         <Link
           href={`/product/${book.id}`}
           className="cursor-pointer shadow-2xl duration-300 hover:translate-y-1 hover:shadow-none"
@@ -88,8 +70,7 @@ const Book = ({ book, isPurchased }: BookProps) => {
             </div>
           </div>
         </Link>
-      </div>
-    </>
+    </div>
   );
 };
 
