@@ -1,13 +1,18 @@
+import "server-only";
+
 import { ProductType } from "@/app/types/types";
 import { createClient } from "microcms-js-sdk";
 
 function getClient() {
-  const serviceDomain = process.env.NEXT_PUBLIC_SERVICE_DOMAIN;
-  const apiKey = process.env.NEXT_PUBLIC_API_KEY;
+  const serviceDomain =
+    process.env.MICROCMS_SERVICE_DOMAIN ??
+    process.env.NEXT_PUBLIC_SERVICE_DOMAIN;
+  const apiKey =
+    process.env.MICROCMS_API_KEY ?? process.env.NEXT_PUBLIC_API_KEY;
 
   if (!serviceDomain || !apiKey) {
     throw new Error(
-      "microCMS: .env.local に NEXT_PUBLIC_SERVICE_DOMAIN と NEXT_PUBLIC_API_KEY を設定してください",
+      "microCMS: .env.local に MICROCMS_SERVICE_DOMAIN と MICROCMS_API_KEY を設定してください",
     );
   }
 

@@ -1,6 +1,6 @@
 import { getServerSession } from "next-auth";
 import ProductCard from "@/app/components/ProductCard";
-import { getAllProducts } from "./lib/microcms/client";
+import { getAllProducts } from "./lib/microcms/server";
 import { ProductType, Purchase, User } from "./types/types";
 import { nextAuthOptions } from "./lib/next-auth/options";
 import Image from "next/image";
@@ -27,10 +27,9 @@ export default async function Home() {
   const apiOrigin = process.env.NEXT_PUBLIC_API_URL ?? "";
   if (user?.id && apiOrigin) {
     const base = apiOrigin.replace(/\/$/, "");
-    const purchasesPath =
-      base.endsWith("/api")
-        ? `${base}/purchases/${user.id}`
-        : `${base}/api/purchases/${user.id}`;
+    const purchasesPath = base.endsWith("/api")
+      ? `${base}/purchases/${user.id}`
+      : `${base}/api/purchases/${user.id}`;
     const response = await fetch(purchasesPath);
 
     if (response.ok) {

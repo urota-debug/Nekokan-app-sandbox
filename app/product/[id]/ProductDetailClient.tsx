@@ -1,13 +1,11 @@
 "use client";
 
-import { getDetailProduct } from "@/app/lib/microcms/client";
 import { normalizeImageUrl } from "@/app/lib/image";
-import Loading from "@/app/loading";
 import { ProductType } from "@/app/types/types";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 const SHIPPING_FEE = 500;
 
@@ -32,35 +30,15 @@ const modalContentStyle: React.CSSProperties = {
   zIndex: 1001,
 };
 
-type Props = { id: string };
+type Props = { product: ProductType };
 
-export default function ProductDetailClient({ id }: Props) {
-  const [product, setProduct] = useState<ProductType | null>(null);
-  const [loading, setLoading] = useState(true);
+export default function ProductDetailClient({ product }: Props) {
   const [showModal, setShowModal] = useState(false);
   const [checkoutError, setCheckoutError] = useState<string | null>(null);
   const router = useRouter();
 
   const { data: session } = useSession();
   const user = session?.user;
-
-  useEffect(() => {
-    if (!id) return;
-
-    const fetchProduct = async () => {
-      try {
-        const fetchedProduct = await getDetailProduct(id);
-        setProduct(fetchedProduct);
-      } catch (error) {
-        console.error("Error fetching product details:", error);
-        setProduct(null);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchProduct();
-  }, [id]);
 
   const startCheckout = async (targetProduct: ProductType) => {
     setCheckoutError(null);
@@ -108,19 +86,9 @@ export default function ProductDetailClient({ id }: Props) {
       return;
     }
 
-    if (!product) return;
-
     setShowModal(false);
     startCheckout(product);
   };
-
-  if (loading) {
-    return <Loading />;
-  }
-
-  if (!product) {
-    return <div>Product not found</div>;
-  }
 
   const formattedPrice = new Intl.NumberFormat("ja-JP", {
     style: "currency",

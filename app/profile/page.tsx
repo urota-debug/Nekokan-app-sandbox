@@ -1,7 +1,7 @@
 import React from "react";
 import Image from "next/image";
 import prisma from "../lib/prisma";
-import { getDetailProduct } from "../lib/microcms/client";
+import { getDetailProduct } from "../lib/microcms/server";
 import { ProductType, User } from "../types/types";
 import { getServerSession } from "next-auth";
 import { nextAuthOptions } from "../lib/next-auth/options";
