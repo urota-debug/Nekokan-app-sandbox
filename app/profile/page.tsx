@@ -1,11 +1,11 @@
 import React from "react";
 import Image from "next/image";
 import prisma from "../lib/prisma";
-import { getDetailBook } from "../lib/microcms/client";
-import { BookType, User } from "../types/types";
+import { getDetailProduct } from "../lib/microcms/client";
+import { ProductType, User } from "../types/types";
 import { getServerSession } from "next-auth";
 import { nextAuthOptions } from "../lib/next-auth/options";
-import Book from "../components/Book";
+import ProductCard from "../components/ProductCard";
 
 export default async function ProfilePage() {
   const session = await getServerSession(nextAuthOptions);
@@ -22,13 +22,13 @@ export default async function ProfilePage() {
     await Promise.all(
       purchases.map(async (purchase) => {
         try {
-          return await getDetailBook(purchase.bookId);
+          return await getDetailProduct(purchase.bookId);
         } catch {
           return null;
         }
       }),
     )
-  ).filter((b): b is BookType => b != null);
+  ).filter((p): p is ProductType => p != null);
 
   return (
     <div className="container mx-auto p-4">
@@ -58,7 +58,7 @@ export default async function ProfilePage() {
       ) : (
         <div className="flex flex-wrap items-center gap-6">
           {detailProducts.map((detailProduct) => (
-            <Book key={detailProduct.id} book={detailProduct} />
+            <ProductCard key={detailProduct.id} product={detailProduct} />
           ))}
         </div>
       )}

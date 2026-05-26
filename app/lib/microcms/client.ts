@@ -1,4 +1,4 @@
-import { BookType } from "@/app/types/types";
+import { ProductType } from "@/app/types/types";
 import { createClient } from "microcms-js-sdk";
 
 function getClient() {
@@ -20,7 +20,7 @@ const requestInit = {
 };
 
 export const getAllProducts = async () => {
-  const list = await getClient().getList<BookType>({
+  const list = await getClient().getList<ProductType>({
     endpoint: "nekokan",
     customRequestInit: requestInit,
   });
@@ -35,8 +35,8 @@ export const getAllProducts = async () => {
   };
 };
 
-export const getDetailBook = async (contentId: string) => {
-  return getClient().getListDetail<BookType>({
+export const getDetailProduct = async (contentId: string) => {
+  return getClient().getListDetail<ProductType>({
     endpoint: "nekokan",
     contentId,
     customRequestInit: requestInit,

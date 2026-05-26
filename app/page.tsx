@@ -1,7 +1,7 @@
 import { getServerSession } from "next-auth";
-import Book from "@/app/components/Book";
+import ProductCard from "@/app/components/ProductCard";
 import { getAllProducts } from "./lib/microcms/client";
-import { BookType, Purchase, User } from "./types/types";
+import { ProductType, Purchase, User } from "./types/types";
 import { nextAuthOptions } from "./lib/next-auth/options";
 import Image from "next/image";
 
@@ -11,12 +11,12 @@ export const dynamic = "force-dynamic";
 export default async function Home() {
   const session = await getServerSession(nextAuthOptions);
   const user = session?.user as User;
-  const booksData = await getAllProducts();
-  const contents = booksData?.contents ?? [];
+  const productsData = await getAllProducts();
+  const contents = productsData?.contents ?? [];
 
   if (process.env.NODE_ENV === "development") {
     console.log("[microCMS]", {
-      totalCount: booksData.totalCount,
+      totalCount: productsData.totalCount,
       contentsLength: contents.length,
     });
   }
@@ -63,11 +63,11 @@ export default async function Home() {
             で公開済みのコンテンツがあるか確認してください。
           </p>
         ) : (
-          contents.map((book: BookType) => (
-            <Book
-              key={book.id}
-              book={book}
-              isPurchased={purchasedIds.includes(book.id)}
+          contents.map((product: ProductType) => (
+            <ProductCard
+              key={product.id}
+              product={product}
+              isPurchased={purchasedIds.includes(product.id)}
             />
           ))
         )}

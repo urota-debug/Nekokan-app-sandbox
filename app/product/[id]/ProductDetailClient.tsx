@@ -1,9 +1,9 @@
 "use client";
 
-import { getDetailBook } from "@/app/lib/microcms/client";
+import { getDetailProduct } from "@/app/lib/microcms/client";
 import { normalizeImageUrl } from "@/app/lib/image";
 import Loading from "@/app/loading";
-import { BookType } from "@/app/types/types";
+import { ProductType } from "@/app/types/types";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -35,7 +35,7 @@ const modalContentStyle: React.CSSProperties = {
 type Props = { id: string };
 
 export default function ProductDetailClient({ id }: Props) {
-  const [book, setBook] = useState<BookType | null>(null);
+  const [product, setProduct] = useState<ProductType | null>(null);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [checkoutError, setCheckoutError] = useState<string | null>(null);
@@ -47,22 +47,22 @@ export default function ProductDetailClient({ id }: Props) {
   useEffect(() => {
     if (!id) return;
 
-    const fetchBook = async () => {
+    const fetchProduct = async () => {
       try {
-        const fetchedBook = await getDetailBook(id);
-        setBook(fetchedBook);
+        const fetchedProduct = await getDetailProduct(id);
+        setProduct(fetchedProduct);
       } catch (error) {
-        console.error("Error fetching book details:", error);
-        setBook(null);
+        console.error("Error fetching product details:", error);
+        setProduct(null);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchBook();
+    fetchProduct();
   }, [id]);
 
-  const startCheckout = async (targetBook: BookType) => {
+  const startCheckout = async (targetProduct: ProductType) => {
     setCheckoutError(null);
 
     try {
@@ -70,9 +70,9 @@ export default function ProductDetailClient({ id }: Props) {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          productId: targetBook.id,
-          title: targetBook.title,
-          price: targetBook.price + SHIPPING_FEE,
+          productId: targetProduct.id,
+          title: targetProduct.title,
+          price: targetProduct.price + SHIPPING_FEE,
           userId: user?.id,
         }),
       });
@@ -108,30 +108,30 @@ export default function ProductDetailClient({ id }: Props) {
       return;
     }
 
-    if (!book) return;
+    if (!product) return;
 
     setShowModal(false);
-    startCheckout(book);
+    startCheckout(product);
   };
 
   if (loading) {
     return <Loading />;
   }
 
-  if (!book) {
+  if (!product) {
     return <div>Product not found</div>;
   }
 
   const formattedPrice = new Intl.NumberFormat("ja-JP", {
     style: "currency",
     currency: "JPY",
-  }).format(book.price);
+  }).format(product.price);
 
   const formatContent = (content: string) => {
     return { __html: content.replace(/\n/g, "<br>") };
   };
 
-  const imageSrc = normalizeImageUrl(book.image?.url);
+  const imageSrc = normalizeImageUrl(product.image?.url);
 
   return (
     <div className="container mx-auto p-4 mt-8 mb-8">
@@ -140,7 +140,7 @@ export default function ProductDetailClient({ id }: Props) {
           <div className="relative h-80 w-full">
             <Image
               src={imageSrc}
-              alt={book.title}
+              alt={product.title}
               fill
               sizes="(max-width: 768px) 100vw, 896px"
               className="object-cover object-center"
@@ -154,16 +154,16 @@ export default function ProductDetailClient({ id }: Props) {
         <div className="p-4">
           <div className="flex justify-between items-center mt-2">
             <span className="text-sm text-gray-500">
-              公開日: {new Date(book.createdAt).toLocaleString()}
+              公開日: {new Date(product.createdAt).toLocaleString()}
             </span>
             <span className="text-sm text-gray-500">
-              最終更新: {new Date(book.updatedAt).toLocaleString()}
+              最終更新: {new Date(product.updatedAt).toLocaleString()}
             </span>
           </div>
-          <h2 className="text-3xl font-bold mt-5">{book.title}</h2>
+          <h2 className="text-3xl font-bold mt-5">{product.title}</h2>
           <div
             className="text-gray-700 mt-10 mb-20"
-            dangerouslySetInnerHTML={formatContent(book.content)}
+            dangerouslySetInnerHTML={formatContent(product.content)}
           />
 
           <div className="flex justify-center items-center space-x-2">

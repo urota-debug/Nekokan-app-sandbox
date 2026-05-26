@@ -2,15 +2,15 @@
 
 import Image from "next/image";
 import { normalizeImageUrl } from "@/app/lib/image";
-import { BookType } from "@/app/types/types";
+import { ProductType } from "@/app/types/types";
 import Link from "next/link";
 
-type BookProps = {
-  book: BookType;
+type ProductCardProps = {
+  product: ProductType;
   isPurchased?: boolean;
 };
 
-const Book = ({ book, isPurchased }: BookProps) => {
+const ProductCard = ({ product, isPurchased }: ProductCardProps) => {
   const truncateText = (text: string, maxLength: number) => {
     if (text.length > maxLength) {
       return text.substring(0, maxLength) + "...";
@@ -19,17 +19,17 @@ const Book = ({ book, isPurchased }: BookProps) => {
     }
   };
 
-  const imageSrc = normalizeImageUrl(book.image?.url);
+  const imageSrc = normalizeImageUrl(product.image?.url);
 
   const formattedPrice = new Intl.NumberFormat("ja-JP", {
     style: "currency",
     currency: "JPY",
-  }).format(book.price);
+  }).format(product.price);
 
   return (
     <div className="flex flex-col items-center m-4 w-96">
         <Link
-          href={`/product/${book.id}`}
+          href={`/product/${product.id}`}
           className="cursor-pointer shadow-2xl duration-300 hover:translate-y-1 hover:shadow-none"
         >
           <div className="relative w-96 h-64">
@@ -37,7 +37,7 @@ const Book = ({ book, isPurchased }: BookProps) => {
               <Image
                 priority
                 src={imageSrc}
-                alt={book.title}
+                alt={product.title}
                 fill
                 sizes="384px"
                 className="rounded-t-md object-cover"
@@ -49,21 +49,9 @@ const Book = ({ book, isPurchased }: BookProps) => {
             )}
           </div>
           <div className="px-4 py-4 bg-slate-100 rounded-b-md h-full">
-            <h2 className="text-xl font-semibold">{book.title}</h2>
-            {/* {book.tag && (
-              <div className="mt-2">
-                {book.tag.map((tag, index) => (
-                  <span
-                    key={index}
-                    className="inline-block bg-yellow-400 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2"
-                  >
-                    {tag}
-                  </span>
-                ))}
-              </div>
-            )} */}
+            <h2 className="text-xl font-semibold">{product.title}</h2>
             <p className="mt-2 text-lg text-slate-600">
-              {truncateText(book.content, 50)}
+              {truncateText(product.content, 50)}
             </p>
             <div className="flex justify-between items-center mt-3">
               {isPurchased ? (
@@ -83,4 +71,4 @@ const Book = ({ book, isPurchased }: BookProps) => {
   );
 };
 
-export default Book;
+export default ProductCard;

@@ -1,5 +1,5 @@
 /** microCMS リスト API（nekokan）の1件と同じ形 */
-type BookType = {
+type ProductType = {
   id: string;
   title: string;
   price: number;
@@ -26,4 +26,4 @@ type User = {
   image: string;
 };
 
-export type { BookType, Purchase, User };
+export type { ProductType, Purchase, User };
