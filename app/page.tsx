@@ -24,10 +24,14 @@ export default async function Home() {
   let purchasesData = [];
   let purchasedIds: string[] = [];
 
-  if (user?.id && process.env.NEXT_PUBLIC_API_URL) {
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/purchases/${user.id}`,
-    );
+  const apiOrigin = process.env.NEXT_PUBLIC_API_URL ?? "";
+  if (user?.id && apiOrigin) {
+    const base = apiOrigin.replace(/\/$/, "");
+    const purchasesPath =
+      base.endsWith("/api")
+        ? `${base}/purchases/${user.id}`
+        : `${base}/api/purchases/${user.id}`;
+    const response = await fetch(purchasesPath);
 
     if (response.ok) {
       purchasesData = await response.json();
