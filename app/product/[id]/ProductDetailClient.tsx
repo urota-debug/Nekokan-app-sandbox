@@ -2,7 +2,7 @@
 
 import { normalizeImageUrl } from "@/app/lib/image";
 import { ProductType } from "@/app/types/types";
-import { useSession } from "next-auth/react";
+import { signIn, useSession } from "next-auth/react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -82,7 +82,9 @@ export default function ProductDetailClient({ product }: Props) {
   const handlePurchaseConfirm = () => {
     if (!user) {
       setShowModal(false);
-      router.push("/api/auth/signin");
+      void signIn(undefined, {
+        callbackUrl: `/product/${product.id}`,
+      });
       return;
     }
 
