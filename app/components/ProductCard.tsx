@@ -30,7 +30,7 @@ const ProductCard = ({ product, isPurchased }: ProductCardProps) => {
     <div className="flex flex-col items-center m-4 w-96">
         <Link
           href={`/product/${product.id}`}
-          className="cursor-pointer shadow-2xl duration-300 hover:translate-y-1 hover:shadow-none"
+          className="cursor-pointer text-[#171717] shadow-2xl duration-300 hover:translate-y-1 hover:shadow-none"
         >
           <div className="relative w-96 h-64">
             {imageSrc ? (
@@ -49,8 +49,10 @@ const ProductCard = ({ product, isPurchased }: ProductCardProps) => {
             )}
           </div>
           <div className="px-4 py-4 bg-slate-100 rounded-b-md h-full">
-            <h2 className="text-xl font-semibold">{product.title}</h2>
-            <p className="mt-2 text-lg text-slate-600">
+            <h2 className="text-xl font-semibold text-[#171717]">
+              {product.title}
+            </h2>
+            <p className="mt-2 text-lg text-neutral-700">
               {truncateText(product.content, 50)}
             </p>
             <div className="flex justify-between items-center mt-3">
@@ -61,7 +63,7 @@ const ProductCard = ({ product, isPurchased }: ProductCardProps) => {
               ) : (
                 <span className="flex-grow"></span>
               )}
-              <p className="text-md text-slate-700 text-right">
+              <p className="text-md text-neutral-800 text-right">
                 {formattedPrice}
               </p>
             </div>
