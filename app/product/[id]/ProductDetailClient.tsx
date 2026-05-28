@@ -128,7 +128,9 @@ export default function ProductDetailClient({ product }: Props) {
               最終更新: {new Date(product.updatedAt).toLocaleString()}
             </span>
           </div>
-          <h2 className="text-3xl font-bold mt-5">{product.title}</h2>
+          <h2 className="mt-5 text-3xl font-bold text-[#171717]">
+            {product.title}
+          </h2>
           <div
             className="text-gray-700 mt-10 mb-20"
             dangerouslySetInnerHTML={formatContent(product.content)}

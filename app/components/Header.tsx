@@ -39,7 +39,8 @@ const Header = async () => {
           <input
             type="text"
             placeholder="人気の猫缶を検索...."
-            className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full rounded-md border border-neutral-300 bg-white px-4 py-2 text-[#171717] placeholder:text-[#525252] focus:outline-none focus:ring-2 focus:ring-blue-500"
+            style={{ colorScheme: "only light" }}
           />
         </div>
 

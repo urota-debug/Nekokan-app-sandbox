@@ -12,6 +12,9 @@ const notoSansJP = Noto_Sans_JP({ weight: "400", subsets: ["latin"] });
 export const metadata: Metadata = {
   title: "猫缶.com",
   description: "肉球に届け！",
+  other: {
+    "color-scheme": "light",
+  },
 };
 
 export default function RootLayout({
@@ -20,8 +23,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="ja">
-      <body className={notoSansJP.className}>
+    <html lang="ja" className="light" style={{ colorScheme: "only light" }}>
+      <body
+        className={`${notoSansJP.className} bg-white text-[#171717] antialiased`}
+      >
         <NextAuthProvider>
           <Header />
           <Suspense fallback={<Loading />}>{children}</Suspense>
